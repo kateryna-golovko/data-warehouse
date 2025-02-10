@@ -14,6 +14,13 @@ Second project provided by Udacity in the "Data Engineering with AWS" course. Th
 5. After launching Redshift cluster, create an IAM role that has read access to S3.
 6. Add information about redshift database and IAM role to *dwh.cfg*.
 7. Test that everything is running correctly by running *create_tables.p*y and checking the table schemas in the redshift database. For the testing purposes, Query Editor in the AWS Redshift console can be used.
+8. Implement the logic in *etl.py* to load data from S3 to staging tables on Redshift.
+9. Implement the logic in *etl.py* to load data from staging tables to analytics tables on Redshift.
+10. Test by running *etl.py* after running *create_tables.py* and running the analytic queries on the created Redshift database to compare the outputs with the expected results.
+11. Delete the redshift cluster when finished to avoid extreme costs.
+12. Discuss the purpose of this database in context of the startup, Sparkify, and their analytical goals.
+13. State and justify your database schema design and ETL pipeline.
+14. Provide some queries and results for song play analysis.
 
 ### Relevant instructions:
 #### Create an IAM Role
