@@ -20,12 +20,39 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 # The staging tables will have the same column structure as final columns 
 staging_events_table_create= ("""
     CREATE TABLE staging_events (
+        artist varchar,
+        auth varchar,
+        firstName varchar,
+        gender varchar,
+        iteminSession int,
+        lastName varchar,
+        length numeric,
+        level varchar,
+        location varchar,
+        method varchar,
+        page varchar,
+        registration nemeric,
+        sessionId int,
+        song varchar,
+        status int
+        ts int,
+        userAgent varchar,
+        userId int
     );
 """)
 
 staging_songs_table_create = ("""
     CREATE TABLE staging_songs (
-    
+        num_songs int,
+        artist_id varchar,
+        artist_latitude varchar,
+        artist_longitude varchar,
+        artist_location varchar,
+        artist_name varchar,
+        song_id varchar,
+        title varchar,
+        duration float,
+        year int 
     );
 """)
 
