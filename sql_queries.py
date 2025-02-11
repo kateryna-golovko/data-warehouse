@@ -34,37 +34,55 @@ songplay_table_create = ("""
         songplay_id int PRIMARY KEY, 
         start_time timestamp NOT NULL, 
         user_id int NOT NULL, 
-        level varchar(50) NOT NULL, 
+        level varchar(50), 
         song_id varchar(100) NOT NULL, 
         artist_id varchar(100) NOT NULL, 
         session_id int NOT NULL, 
-        location varchar(255) NOT NULL, 
-        user_agent varchar(500) NOT NULL   
+        location varchar(255), 
+        user_agent varchar(500)    
     );
     
 """)
 
 user_table_create = ("""
     CREATE TABLE user (
-    
+        user_id int PRIMARY KEY,
+        firstname varchar(100),
+        lastname varchar(100),
+        gender varchar(50),
+        level varchar(50)
     );
 """)
 
 song_table_create = ("""
     CREATE TABLE song (
-    
+        song_id varchar(100) PRIMARY KEY,
+        title varchar(255),
+        artist_id varchar(100),
+        year int,
+        duration float
     );
 """)
 
 artist_table_create = ("""
     CREATE TABLE artist (
-    
+        artist_id varchar(100) PRIMARY KEY,
+        name varchar(100),
+        location varchar(255),
+        latitude float,
+        longitude float
     );
 """)
 
 time_table_create = ("""
     CREATE TABLE time (
-    
+        startime timestamp PRIMARY KEY,
+        hour int,
+        day int,
+        week int,
+        month int,
+        year int,
+        weekday int
     );
 """)
 
