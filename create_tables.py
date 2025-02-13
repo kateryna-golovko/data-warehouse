@@ -20,7 +20,7 @@ def main():
     config.read('dwh.cfg')
 
     #Fill this in as a second step
-    conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(*config['CLUSTER'].values()))
+    conn = psycopg2.connect("host={redshift-cluster-1.ca9ny7ohyv8p.us-east-1.redshift.amazonaws.com:5439/dev} dbname={dev} user={awsuser} password={A251d851!} port={5439}".format(*config['CLUSTER'].values())) #host - cluster endpoint
     cur = conn.cursor()
 
     drop_tables(cur, conn)

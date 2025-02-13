@@ -10,7 +10,7 @@ config.read('dwh.cfg')
 staging_events_table_drop = "DROP TABLE IF EXISTS staging_events"
 staging_songs_table_drop = "DROP TABLE IF EXISTS staging_songs"
 songplay_table_drop = "DROP TABLE IF EXISTS songplay"
-user_table_drop = "DROP TABLE IF EXISTS user"
+user_table_drop = "DROP TABLE IF EXISTS user_info"
 song_table_drop = "DROP TABLE IF EXISTS song"
 artist_table_drop = "DROP TABLE IF EXISTS artist"
 time_table_drop = "DROP TABLE IF EXISTS time"
@@ -20,23 +20,23 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 # The staging tables will have the same column structure as final columns 
 staging_events_table_create= ("""
     CREATE TABLE staging_events (
-        artist varchar,
-        auth varchar,
-        firstName varchar,
-        gender varchar,
+        artist varchar(100),
+        auth varchar(255),
+        firstName varchar(100),
+        gender varchar(50),
         iteminSession int,
-        lastName varchar,
+        lastName varchar(100),
         length numeric,
-        level varchar,
-        location varchar,
-        method varchar,
-        page varchar,
-        registration nemeric,
+        level varchar(50),
+        location varchar(255),
+        method varchar(50),
+        page varchar(50),
+        registration numeric,
         sessionId int,
-        song varchar,
-        status int
+        song varchar(255),
+        status int,
         ts int,
-        userAgent varchar,
+        userAgent varchar(500),
         userId int
     );
 """)
@@ -44,13 +44,13 @@ staging_events_table_create= ("""
 staging_songs_table_create = ("""
     CREATE TABLE staging_songs (
         num_songs int,
-        artist_id varchar,
-        artist_latitude varchar,
-        artist_longitude varchar,
-        artist_location varchar,
-        artist_name varchar,
-        song_id varchar,
-        title varchar,
+        artist_id varchar(100),
+        artist_latitude varchar(100),
+        artist_longitude varchar(100),
+        artist_location varchar(255),
+        artist_name varchar(100),
+        song_id varchar(100),
+        title varchar(255),
         duration float,
         year int 
     );
@@ -72,7 +72,7 @@ songplay_table_create = ("""
 """)
 
 user_table_create = ("""
-    CREATE TABLE user (
+    CREATE TABLE user_info (
         user_id int PRIMARY KEY,
         firstname varchar(100),
         lastname varchar(100),
