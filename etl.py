@@ -19,7 +19,27 @@ def main():
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
 
-    conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(*config['CLUSTER'].values()))
+   # Extract values from the config file
+    host = config['CLUSTER']['HOST'] 
+    dbname = config['CLUSTER']['DB_NAME']
+    user = config['CLUSTER']['DB_USER']
+    password = config['CLUSTER']['DB_PASSWORD']
+    port = config['CLUSTER']['DB_PORT']
+    iam_role_arn = config['IAM_ROLE']['ARN']
+    staging_logdata_bucket = config['S3']['LOG_DATA']
+    staging_jsonpath_bucket = config['S3']['LOG_JSONPATH']
+    staging_songs_bucket = config['S3']['SONG_DATA']
+    
+    # Establish connection to Redshift
+    conn = psycopg2.connect(
+        host=host,
+        dbname=dbname,
+        user=user,
+        password=password,
+        port=port
+    )
+    
+    # Create a cursor to interact with the database
     cur = conn.cursor()
     
     load_staging_tables(cur, conn)
