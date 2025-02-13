@@ -20,12 +20,39 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 # The staging tables will have the same column structure as final columns 
 staging_events_table_create= ("""
     CREATE TABLE staging_events (
+        artist varchar,
+        auth varchar,
+        firstName varchar,
+        gender varchar,
+        iteminSession int,
+        lastName varchar,
+        length numeric,
+        level varchar,
+        location varchar,
+        method varchar,
+        page varchar,
+        registration nemeric,
+        sessionId int,
+        song varchar,
+        status int
+        ts int,
+        userAgent varchar,
+        userId int
     );
 """)
 
 staging_songs_table_create = ("""
     CREATE TABLE staging_songs (
-    
+        num_songs int,
+        artist_id varchar,
+        artist_latitude varchar,
+        artist_longitude varchar,
+        artist_location varchar,
+        artist_name varchar,
+        song_id varchar,
+        title varchar,
+        duration float,
+        year int 
     );
 """)
 
@@ -34,37 +61,55 @@ songplay_table_create = ("""
         songplay_id int PRIMARY KEY, 
         start_time timestamp NOT NULL, 
         user_id int NOT NULL, 
-        level varchar(50) NOT NULL, 
+        level varchar(50), 
         song_id varchar(100) NOT NULL, 
         artist_id varchar(100) NOT NULL, 
         session_id int NOT NULL, 
-        location varchar(255) NOT NULL, 
-        user_agent varchar(500) NOT NULL   
+        location varchar(255), 
+        user_agent varchar(500)    
     );
     
 """)
 
 user_table_create = ("""
     CREATE TABLE user (
-    
+        user_id int PRIMARY KEY,
+        firstname varchar(100),
+        lastname varchar(100),
+        gender varchar(50),
+        level varchar(50)
     );
 """)
 
 song_table_create = ("""
     CREATE TABLE song (
-    
+        song_id varchar(100) PRIMARY KEY,
+        title varchar(255),
+        artist_id varchar(100),
+        year int,
+        duration float
     );
 """)
 
 artist_table_create = ("""
     CREATE TABLE artist (
-    
+        artist_id varchar(100) PRIMARY KEY,
+        name varchar(100),
+        location varchar(255),
+        latitude float,
+        longitude float
     );
 """)
 
 time_table_create = ("""
     CREATE TABLE time (
-    
+        startime timestamp PRIMARY KEY,
+        hour int,
+        day int,
+        week int,
+        month int,
+        year int,
+        weekday int
     );
 """)
 
