@@ -115,11 +115,20 @@ time_table_create = ("""
 
 # STAGING TABLES
 
-staging_events_copy = ("""
-""").format()
+#specify that the file is JSON format
+#add that the invalid characters will be replaced with '?' during loading to avoid failed load
+staging_events_copy = (""" COPY staging_events FROM '{LOG_DATA}'
+CREDENTIALS 'aws_iam_role={ARN}'
+FORMAT AS JSON 'auto'
+REGION 'us-west-2'
+ACCEPTINVCHARS AS '?'
+""").format(LOG_DATA, ARN)
 
-staging_songs_copy = ("""
-""").format()
+staging_songs_copy = (""" COPY staging_songs FROM '{SONG_DATA}'
+CREDENTIALS 'aws_iam_role={ARN}'
+REGION 'us-west-2'
+ACCEPTINVCHARS AS '?'
+""").format(SONG_DATA, ARN)
 
 # FINAL TABLES
 
