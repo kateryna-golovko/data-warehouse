@@ -135,7 +135,7 @@ ACCEPTINVCHARS AS '?'
 # start_time - converting timestamp from milliseconds to seconds
 songplay_table_insert = (""" INSERT INTO songplay
 (songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
-ROW_NUMBER() OVER (ORDER BY e.ts) as songplay_id, 
+SELECT ROW_NUMBER() OVER (ORDER BY e.ts) as songplay_id, 
 to_timestamp(e.ts/1000) as start_time, 
 e.userId as user_id,
 e.level as level,
@@ -148,7 +148,14 @@ FROM staging_songs s
 JOIN staging_events e on e.artist=s.artist_name
 """)
 
-user_table_insert = ("""
+user_table_insert = (""" INSERT INTO user_info
+(user_id, firstname, lastname, gender, level)
+SELECT DISTINCT userId as user_id,
+firstName as firstname,
+lastName as lastname,
+gender,
+level
+FROM staging_events
 """)
 
 song_table_insert = ("""
