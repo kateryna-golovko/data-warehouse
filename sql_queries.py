@@ -168,7 +168,14 @@ duration
 FROM staging_songs
 """)
 
-artist_table_insert = ("""
+artist_table_insert = (""" INSERT INTO artist
+(artist_id, name, location, latitude, longitude)
+SELECT DISTINCT artist_id,
+artist_name as name,
+artist_location as location,
+artist_latitude as latitude,
+artist_longitude as longitude
+FROM staging_songs
 """)
 
 time_table_insert = ("""
