@@ -131,8 +131,21 @@ ACCEPTINVCHARS AS '?'
 """).format(SONG_DATA, ARN)
 
 # FINAL TABLES
-
-songplay_table_insert = ("""
+# songplay_id - generate a unique id - use ROW_NUMBER() function to generate a unique integer for each row within a result set- The number is assigned based on the order defined by the ORDER BY clause - order by timestamp to ensure the correct order of the generated IDs
+# start_time - converting timestamp from milliseconds to seconds
+songplay_table_insert = (""" INSERT INTO songplay
+(songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
+ROW_NUMBER() OVER (ORDER BY e.ts) as songplay_id, 
+to_timestamp(e.ts/1000) as start_time, 
+e.userId as user_id,
+e.level as level,
+s.song_id as song_id,
+s.artist_id as artist_id,
+e.sessionId as session_id,
+s.artist_location as location,
+e.userAgent as user_agent
+FROM staging_songs s 
+JOIN staging_events e on e.artist=s.artist_name
 """)
 
 user_table_insert = ("""
