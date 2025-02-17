@@ -158,7 +158,14 @@ level
 FROM staging_events
 """)
 
-song_table_insert = ("""
+song_table_insert = (""" INSERT INTO song
+(song_id, title, artist_id, year, duration)
+SELECT DISTINCT song_id,
+title,
+artist_id,
+year,
+duration
+FROM staging_songs
 """)
 
 artist_table_insert = ("""
