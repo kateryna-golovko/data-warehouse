@@ -146,6 +146,7 @@ s.artist_location as location,
 e.userAgent as user_agent
 FROM staging_songs s 
 JOIN staging_events e on e.artist=s.artist_name
+WHERE e.page='NextSong'
 """)
 
 user_table_insert = (""" INSERT INTO user_info
@@ -156,6 +157,7 @@ lastName as lastname,
 gender,
 level
 FROM staging_events
+WHERE page='NextSong'
 """)
 
 song_table_insert = (""" INSERT INTO song
@@ -178,7 +180,17 @@ artist_longitude as longitude
 FROM staging_songs
 """)
 
-time_table_insert = ("""
+time_table_insert = (""" INSERT INTO time
+(startime, hour, day, week, month, year, weekday)
+SELECT DISTINCT to_timestamp(e.ts/1000) AS start_time,
+EXTRACT(hour FROM to_timestamp(e.ts/1000)) AS hour,
+EXTRACT(day FROM to_timestamp(e.ts/1000)) AS day,
+EXTRACT(week FROM to_timestamp(e.ts/1000)) AS week,
+EXTRACT(month FROM to_timestamp(e.ts/1000)) AS month,
+EXTRACT(year FROM to_timestamp(e.ts/1000)) AS year,
+EXTRACT(dow FROM to_timestamp(e.ts/1000)) AS weekday,
+FROM staging_events
+WHERE page='NextSong'
 """)
 # After the logic for all the above tables is written, go to create_tables.py and fill in the connection to the DB
 # This will create the above empty tables in Redshift
