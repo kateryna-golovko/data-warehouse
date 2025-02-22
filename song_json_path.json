@@ -1,0 +1,12 @@
+{
+    "num_songs": "$.num_songs",
+    "artist_id": "$.artist_id",
+    "artist_latitude": "$.artist_latitude",
+    "artist_longitude": "$.artist_longitude",
+    "artist_location": "$.artist_location",
+    "artist_name": "$.artist_name",
+    "song_id": "$.song_id",
+    "title": "$.title",
+    "duration": "$.duration",
+    "year": "$.year"
+}
