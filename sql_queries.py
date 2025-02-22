@@ -20,36 +20,36 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 # The staging tables will have the same column structure as final columns 
 staging_events_table_create= ("""
     CREATE TABLE staging_events (
-        artist varchar(100),
+        artist varchar(255),
         auth varchar(255),
-        firstName varchar(100),
+        firstName varchar(255),
         gender varchar(50),
-        iteminSession int,
-        lastName varchar(100),
+        iteminSession bigint,
+        lastName varchar(255),
         length numeric,
         level varchar(50),
-        location varchar(255),
+        location varchar(500),
         method varchar(50),
-        page varchar(50),
+        page varchar(100),
         registration numeric,
-        sessionId int,
+        sessionId bigint,
         song varchar(255),
         status int,
-        ts int,
+        ts bigint,
         userAgent varchar(500),
-        userId int
+        userId bigint
     );
 """)
 
 staging_songs_table_create = ("""
     CREATE TABLE staging_songs (
         num_songs int,
-        artist_id varchar(100),
-        artist_latitude varchar(100),
-        artist_longitude varchar(100),
-        artist_location varchar(255),
-        artist_name varchar(100),
-        song_id varchar(100),
+        artist_id varchar(255),
+        artist_latitude varchar(255),
+        artist_longitude varchar(255),
+        artist_location varchar(500),
+        artist_name varchar(255),
+        song_id varchar(255),
         title varchar(255),
         duration float,
         year int 
@@ -60,12 +60,12 @@ songplay_table_create = ("""
     CREATE TABLE songplay (
         songplay_id int PRIMARY KEY, 
         start_time timestamp NOT NULL, 
-        user_id int NOT NULL, 
-        level varchar(50), 
-        song_id varchar(100) NOT NULL, 
-        artist_id varchar(100) NOT NULL, 
-        session_id int NOT NULL, 
-        location varchar(255), 
+        user_id bigint NOT NULL, 
+        level varchar(100), 
+        song_id varchar(255) NOT NULL, 
+        artist_id varchar(255) NOT NULL, 
+        session_id bigint NOT NULL, 
+        location varchar(500), 
         user_agent varchar(500)    
     );
     
@@ -73,9 +73,9 @@ songplay_table_create = ("""
 
 user_table_create = ("""
     CREATE TABLE user_info (
-        user_id int PRIMARY KEY,
-        firstname varchar(100),
-        lastname varchar(100),
+        user_id bigint PRIMARY KEY,
+        firstname varchar(255),
+        lastname varchar(255),
         gender varchar(50),
         level varchar(50)
     );
@@ -83,9 +83,9 @@ user_table_create = ("""
 
 song_table_create = ("""
     CREATE TABLE song (
-        song_id varchar(100) PRIMARY KEY,
+        song_id varchar(255) PRIMARY KEY,
         title varchar(255),
-        artist_id varchar(100),
+        artist_id varchar(255),
         year int,
         duration float
     );
@@ -93,9 +93,9 @@ song_table_create = ("""
 
 artist_table_create = ("""
     CREATE TABLE artist (
-        artist_id varchar(100) PRIMARY KEY,
-        name varchar(100),
-        location varchar(255),
+        artist_id varchar(255) PRIMARY KEY,
+        name varchar(255),
+        location varchar(500),
         latitude float,
         longitude float
     );
@@ -114,21 +114,23 @@ time_table_create = ("""
 """)
 
 # STAGING TABLES
-
 #specify that the file is JSON format
 #add that the invalid characters will be replaced with '?' during loading to avoid failed load
-staging_events_copy = (""" COPY staging_events FROM '{LOG_DATA}'
-CREDENTIALS 'aws_iam_role={ARN}'
-FORMAT AS JSON 'auto'
-REGION 'us-west-2'
-ACCEPTINVCHARS AS '?'
-""").format(LOG_DATA, ARN)
+staging_events_copy = ("""
+    COPY staging_events FROM '{log_data}'
+    CREDENTIALS 'aws_iam_role={arn}'
+    FORMAT AS JSON '{log_jsonpath}'
+    REGION 'us-west-2'
+    ACCEPTINVCHARS AS '?' 
+""")
 
-staging_songs_copy = (""" COPY staging_songs FROM '{SONG_DATA}'
-CREDENTIALS 'aws_iam_role={ARN}'
-REGION 'us-west-2'
-ACCEPTINVCHARS AS '?'
-""").format(SONG_DATA, ARN)
+staging_songs_copy = ("""
+    COPY staging_songs FROM '{song_data}'
+    CREDENTIALS 'aws_iam_role={arn}'
+    FORMAT AS JSON 'auto'
+    REGION 'us-west-2'
+    ACCEPTINVCHARS AS '?' 
+""")
 
 # FINAL TABLES
 # songplay_id - generate a unique id - use ROW_NUMBER() function to generate a unique integer for each row within a result set- The number is assigned based on the order defined by the ORDER BY clause - order by timestamp to ensure the correct order of the generated IDs
@@ -136,7 +138,7 @@ ACCEPTINVCHARS AS '?'
 songplay_table_insert = (""" INSERT INTO songplay
 (songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
 SELECT ROW_NUMBER() OVER (ORDER BY e.ts) as songplay_id, 
-to_timestamp(e.ts/1000) as start_time, 
+TIMESTAMP 'epoch' + (e.ts / 1000) * INTERVAL '1 second' as start_time, 
 e.userId as user_id,
 e.level as level,
 s.song_id as song_id,
@@ -175,25 +177,23 @@ artist_table_insert = (""" INSERT INTO artist
 SELECT DISTINCT artist_id,
 artist_name as name,
 artist_location as location,
-artist_latitude as latitude,
-artist_longitude as longitude
+CAST(artist_latitude AS DOUBLE PRECISION) AS latitude,
+CAST(artist_longitude AS DOUBLE PRECISION) AS longitude
 FROM staging_songs
 """)
 
 time_table_insert = (""" INSERT INTO time
 (startime, hour, day, week, month, year, weekday)
-SELECT DISTINCT to_timestamp(e.ts/1000) AS start_time,
-EXTRACT(hour FROM to_timestamp(e.ts/1000)) AS hour,
-EXTRACT(day FROM to_timestamp(e.ts/1000)) AS day,
-EXTRACT(week FROM to_timestamp(e.ts/1000)) AS week,
-EXTRACT(month FROM to_timestamp(e.ts/1000)) AS month,
-EXTRACT(year FROM to_timestamp(e.ts/1000)) AS year,
-EXTRACT(dow FROM to_timestamp(e.ts/1000)) AS weekday,
-FROM staging_events
+SELECT DISTINCT TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second' AS start_time,
+EXTRACT(hour FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second') AS hour,
+EXTRACT(day FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second') AS day,
+EXTRACT(week FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second') AS week,
+EXTRACT(month FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second') AS month,
+EXTRACT(year FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second') AS year,
+EXTRACT(dow FROM TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second') AS weekday
+FROM staging_events 
 WHERE page='NextSong'
 """)
-# After the logic for all the above tables is written, go to create_tables.py and fill in the connection to the DB
-# This will create the above empty tables in Redshift
 
 # QUERY LISTS
 
