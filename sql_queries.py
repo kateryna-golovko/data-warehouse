@@ -1,12 +1,13 @@
-import configparser
+import configparser # Read configuration file
 
 
 # CONFIG
+# Use the ConfigParser to read the configuration file dwh.cfg for database and AWS credentials
 config = configparser.ConfigParser()
 config.read('dwh.cfg')
 
 # DROP TABLES
-#This is step 3 - drop tables to avoid errors when rerruning the code
+# Drop the existing tables to avoid errors when re-rruning the code
 staging_events_table_drop = "DROP TABLE IF EXISTS staging_events"
 staging_songs_table_drop = "DROP TABLE IF EXISTS staging_songs"
 songplay_table_drop = "DROP TABLE IF EXISTS songplay"
@@ -16,8 +17,7 @@ artist_table_drop = "DROP TABLE IF EXISTS artist"
 time_table_drop = "DROP TABLE IF EXISTS time"
 
 # CREATE TABLES
-# First step - create all the below tables (keep them empty), use the columns provided in the instructions
-# The staging tables will have the same column structure as final columns 
+# Create emoty staging and final tables with column names and types defined
 staging_events_table_create= ("""
     CREATE TABLE staging_events (
         artist varchar(255),
@@ -114,8 +114,9 @@ time_table_create = ("""
 """)
 
 # STAGING TABLES
-#specify that the file is JSON format
-#add that the invalid characters will be replaced with '?' during loading to avoid failed load
+# Load the data from the S3 bucket into the staging tables, specify IAM role for S3 Read access for Redshift
+# Specify that the file is JSON format
+# The invalid characters will be replaced with '?' during loading to avoid failed load
 staging_events_copy = ("""
     COPY staging_events FROM '{log_data}'
     CREDENTIALS 'aws_iam_role={arn}'
@@ -133,7 +134,9 @@ staging_songs_copy = ("""
 """)
 
 # FINAL TABLES
-# songplay_id - generate a unique id - use ROW_NUMBER() function to generate a unique integer for each row within a result set- The number is assigned based on the order defined by the ORDER BY clause - order by timestamp to ensure the correct order of the generated IDs
+# Load data from staging tables into the final tables within Redshift
+
+# songplay_id - generate a unique id - use ROW_NUMBER() function to generate a unique integer for each row within a result set - The number is assigned based on the order defined by the ORDER BY clause - order by timestamp to ensure the correct order of the generated IDs
 # start_time - converting timestamp from milliseconds to seconds
 songplay_table_insert = (""" INSERT INTO songplay
 (songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
@@ -182,6 +185,8 @@ CAST(artist_longitude AS DOUBLE PRECISION) AS longitude
 FROM staging_songs
 """)
 
+# Convert the timestamp from milliseconds into seconds and cast it to timestamp data type
+# Extract hour, day, week, etc. from the timestamp
 time_table_insert = (""" INSERT INTO time
 (startime, hour, day, week, month, year, weekday)
 SELECT DISTINCT TIMESTAMP 'epoch' + (ts / 1000) * INTERVAL '1 second' AS start_time,
@@ -196,7 +201,7 @@ WHERE page='NextSong'
 """)
 
 # QUERY LISTS
-
+# List of queries to create, drop, copy, and insert data into respective tables
 create_table_queries = [staging_events_table_create, staging_songs_table_create, songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
 drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
 copy_table_queries = [staging_events_copy, staging_songs_copy]
