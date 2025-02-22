@@ -43,7 +43,7 @@ ORDER BY COUNT(sp.song_id) DESC
 LIMIT 5'
 
 The output is:
-![query2](./data-warehouse-query-2)
+![query2](./data-warehouse-query-2.png)
 
 ** What are top 3 artists? **
 
@@ -58,7 +58,7 @@ ORDER BY COUNT(sp.artist_id) DESC
 LIMIT 3'
 
 The output is:
-![query3](./data-warehouse-query-3)
+![query3](./data-warehouse-query-3.png)
 
 
 ### Steps:
