@@ -83,12 +83,3 @@ The output is:
 16. Provide some queries and results for song play analysis.
 
 *Note that when Redshift cluter is deleted all the created tables get deleted as well.*
-
-### Relevant instructions:
-#### Create an IAM Role
-#### Create Security Group
-#### Create an IAM User
-#### Launch a Redshift Cluster
-#### Delete a Redshift Cluster
-#### ETL in Redshift
-   
